@@ -12,6 +12,7 @@ import os
 import re
 from execute_util import Rendering, pop_renderings
 from file_util import ensure_directory_exists, relativize
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -34,7 +35,7 @@ class Step:
     stack: list[StackElement]
     """The stack of function calls."""
 
-    env: dict[str, any]
+    env: dict[str, Any]
     """The local variables including function arguments(that we're @inspect-ing)."""
 
     renderings: list[Rendering] = field(default_factory=list)
@@ -53,13 +54,13 @@ class Trace:
     steps: list[Step]
 
 
-def to_primitive(value: any) -> any:
+def to_primitive(value: Any) -> Any:
     if isinstance(value, (int, float, str, bool)):
         return value
     # Force it to be a primitive
     return str(value)
 
-def to_serializable_value(value: any) -> any:
+def to_serializable_value(value: Any) -> Any:
     """Convert any type to a serializable value."""
     if isinstance(value, torch.Tensor):
         return value.tolist()
