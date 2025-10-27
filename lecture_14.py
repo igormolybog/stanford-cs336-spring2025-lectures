@@ -132,7 +132,7 @@ def fasttext_main():
     text("Problem: number of bigrams can get large (and also be unbounded)")
     text("Solution: hashing trick")
     num_bins = 8  # In practice, 10M bins
-    hashed_x = [hash(bigram) % num_bins for bigram in x]  # @inspect hashed_x
+    hashed_x = [mmh3.hash(bigram) % num_bins for bigram in x]  # @inspect hashed_x
 
     text("- For quality filtering, we have K = 2 classes (good versus bad)")
     text("- In that case, fastText is just a linear classifier (H = K = 2)")
@@ -163,7 +163,7 @@ def dsir_main():
     num_bins = 4
     def get_hashed_ngrams(text: str):
         ngrams = text.split(" ")  # Unigram for now
-        return [hash(ngram) % num_bins for ngram in ngrams]
+        return [mmh3.hash(ngram) % num_bins for ngram in ngrams]
 
     training_hashed_ngrams = get_hashed_ngrams(training_text)  # @inspect training_hashed_ngrams
 
