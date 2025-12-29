@@ -1,14 +1,15 @@
 from dataclasses import dataclass
+from typing import Optional, Union
 
 @dataclass(frozen=True)
 class Reference:
-    title: str | None = None
-    authors: list[str] | None = None
-    organization: str | None = None
-    date: str | None = None
-    url: str | None = None
-    description: str | None = None
-    notes: str | None = None
+    title: Optional[str] = None
+    authors: Optional[list[str]] = None
+    organization: Optional[str] = None
+    date: Optional[str] = None
+    url: Optional[str] = None
+    description: Optional[str] = None
+    notes: Optional[str] = None
 
 
 def join(*lines: list[str]) -> str:
