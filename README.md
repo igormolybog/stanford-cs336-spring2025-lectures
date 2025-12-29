@@ -8,6 +8,10 @@ Located in `nonexecutable/`as PDFs
 
 ## Executable lectures
 
+You can convert any lecture to an ipynb by running:
+
+        python3 convert_to_ipynb.py -i lecture_01.py -o lecture_01.ipynb
+
 Located as `lecture_*.py` in the root directory
 
 You can compile a lecture by running:
