@@ -3,6 +3,8 @@ import json
 import os
 import argparse
 import sys
+import base64
+import mimetypes
 
 # Functions that contribute to Markdown content
 CONTENT_FUNCTIONS = {
@@ -161,6 +163,36 @@ class LectureConverter:
         elif func_name == 'image':
             path = self.get_arg_value(node, 0, context_body=context_body)
             if isinstance(path, tuple): path = path[1]
+            
+            width = self.get_arg_value(node, 1, 'width', context_body=context_body)
+            
+            # Check if it's a local path or a remote URL
+            if path.startswith(('http://', 'https://')):
+                if width:
+                    return f'<img src="{path}" width="{width}" />'
+                return f"![image]({path})"
+            
+            # Local image embedding
+            try:
+                # Resolve path relative to the input file
+                abs_path = os.path.join(os.path.dirname(os.path.abspath(self.file_path)), path)
+                if os.path.exists(abs_path):
+                    with open(abs_path, 'rb') as f:
+                        data = base64.b64encode(f.read()).decode('utf-8')
+                    mime, _ = mimetypes.guess_type(abs_path)
+                    if not mime:
+                        mime = 'image/png' # Fallback
+                    
+                    data_uri = f"data:{mime};base64,{data}"
+                    if width:
+                        return f'<img src="{data_uri}" width="{width}" />'
+                    return f"![image]({data_uri})"
+            except Exception as e:
+                print(f"Warning: Could not embed image {path}: {e}", file=sys.stderr)
+            
+            # Fallback to standard Markdown if anything fails
+            if width:
+                return f'<img src="{path}" width="{width}" />'
             return f"![image]({path})"
         elif func_name in ('article_link', 'blog_link', 'x_link', 'youtube_link'):
             url = self.get_arg_value(node, 0, context_body=context_body)
